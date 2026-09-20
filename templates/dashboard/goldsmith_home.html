@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Business Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Business Dashboard</h2>
+
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card p-3 text-center"><h6>Total Orders</h6><h3>{{ total_orders }}</h3></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 text-center"><h6>Total Sales</h6><h3>₹{{ total_sales }}</h3></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 text-center"><h6>Pending Requests</h6><h3>{{ pending_requests }}</h3></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 text-center"><h6>Low Stock Items</h6><h3>{{ low_stock|length }}</h3></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-7">
+    <div class="card p-3">
+      <h5>Sales by Month</h5>
+      <canvas id="salesChart" height="150"></canvas>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card p-3">
+      <h5>Orders by Status</h5>
+      <canvas id="statusChart" height="150"></canvas>
+    </div>
+  </div>
+</div>
+
+{% if low_stock %}
+<div class="card p-3 mt-4">
+  <h5 class="text-danger">Low Stock Alert</h5>
+  <ul class="mb-0">
+    {% for i in low_stock %}<li>{{ i.material_name }} — {{ i.quantity }} {{ i.unit }} left</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('salesChart'), {
+    type: 'line',
+    data: {
+      labels: {{ chart_labels|safe }},
+      datasets: [{ label: 'Sales (₹)', data: {{ chart_values|safe }}, borderColor: '#b8860b', backgroundColor: 'rgba(184,134,11,0.15)', fill: true, tension: 0.3 }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+
+  new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+      labels: {{ status_labels|safe }},
+      datasets: [{ data: {{ status_values|safe }}, backgroundColor: ['#b8860b','#d4af37','#8b6b1f','#e0c469','#5c4813','#999'] }]
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Adjust Stock{% endblock %}
+{% block content %}
+<h2 class="mb-3">Adjust Stock — {{ item.material_name }}</h2>
+<p>Current quantity: <strong>{{ item.quantity }} {{ item.unit }}</strong></p>
+<form method="post" class="card p-4" style="max-width:400px;">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-warning">Update</button>
+</form>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Approve Design{% endblock %}
+{% block content %}
+<h2>Approve this design?</h2>
+<p>An order will be created for the estimated price shown on the request page.</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-warning">Yes, Approve</button>
+  <a href="{% url 'customization:detail' req.pk %}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+{% endblock %}

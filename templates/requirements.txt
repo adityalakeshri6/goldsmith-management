@@ -1,0 +1,4 @@
+Django>=5.0,<6.2
+Pillow>=10.0
+# Uncomment the line below when you switch DATABASES to MySQL in settings.py
+# mysqlclient>=2.2

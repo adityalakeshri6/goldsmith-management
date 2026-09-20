@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Jewellery Catalogue{% endblock %}
+{% block content %}
+<h2 class="mb-3">Jewellery Catalogue</h2>
+
+<form method="get" class="row g-2 mb-4">
+  <div class="col-auto">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search jewellery...">
+  </div>
+  <div class="col-auto">
+    <select name="category" class="form-select">
+      <option value="">All Categories</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if selected_category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-warning">Filter</button>
+  </div>
+</form>
+
+<div class="row">
+  {% for item in items %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        {% if item.image %}
+          <img src="{{ item.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ item.name }}">
+        {% else %}
+          <div class="bg-light text-center py-5 text-muted">No Image</div>
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ item.name }}</h5>
+          <p class="card-text text-muted small">{{ item.category.name }} &middot; {{ item.weight }}g</p>
+          <a href="{% url 'catalogue:detail' item.pk %}" class="btn btn-outline-warning btn-sm">View Details</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No jewellery items found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

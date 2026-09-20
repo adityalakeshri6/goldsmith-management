@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders{% endblock %}
+{% block content %}
+<h2 class="mb-3">Manage Orders</h2>
+<form method="get" class="mb-3">
+  <select name="status" class="form-select" style="max-width:250px;" onchange="this.form.submit()">
+    <option value="">All Statuses</option>
+    {% for value, label in statuses %}
+      <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+</form>
+<table class="table bg-white">
+  <thead><tr><th>#</th><th>Customer</th><th>Item</th><th>Total</th><th>Paid</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    {% for o in orders %}
+      <tr>
+        <td>{{ o.pk }}</td>
+        <td>{{ o.user.username }}</td>
+        <td>{{ o.item_name }}</td>
+        <td>₹{{ o.total_amount }}</td>
+        <td>₹{{ o.advance_payment }}</td>
+        <td><span class="badge bg-warning text-dark">{{ o.get_status_display }}</span></td>
+        <td><a href="{% url 'orders:detail' o.pk %}" class="btn btn-sm btn-outline-warning">View</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="text-muted">No orders yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

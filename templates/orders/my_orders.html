@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<h2 class="mb-3">My Orders</h2>
+<table class="table bg-white">
+  <thead><tr><th>Item</th><th>Total</th><th>Paid</th><th>Status</th><th>Date</th><th></th></tr></thead>
+  <tbody>
+    {% for o in orders %}
+      <tr>
+        <td>{{ o.item_name }}</td>
+        <td>₹{{ o.total_amount }}</td>
+        <td>₹{{ o.advance_payment }}</td>
+        <td><span class="badge bg-warning text-dark">{{ o.get_status_display }}</span></td>
+        <td>{{ o.order_date|date:"d M Y" }}</td>
+        <td><a href="{% url 'orders:detail' o.pk %}" class="btn btn-sm btn-outline-warning">View</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="text-muted">No orders yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

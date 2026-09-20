@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.pk }}{% endblock %}
+{% block content %}
+<h2>Order #{{ order.pk }} — {{ order.item_name }}</h2>
+<span class="badge bg-warning text-dark fs-6">{{ order.get_status_display }}</span>
+
+<div class="card p-3 mt-3" style="max-width:400px;">
+  <div class="d-flex justify-content-between"><span>Total Amount</span><span>₹{{ order.total_amount }}</span></div>
+  <div class="d-flex justify-content-between"><span>Paid So Far</span><span>₹{{ order.advance_payment }}</span></div>
+  <hr>
+  <div class="d-flex justify-content-between price-tag"><span>Remaining</span><span>₹{{ order.remaining_amount }}</span></div>
+</div>
+
+<h5 class="mt-4">Payment History</h5>
+<table class="table bg-white" style="max-width:500px;">
+  <thead><tr><th>Amount</th><th>Date</th></tr></thead>
+  <tbody>
+    {% for p in order.payments.all %}
+      <tr><td>₹{{ p.amount }}</td><td>{{ p.payment_date|date:"d M Y" }}</td></tr>
+    {% empty %}
+      <tr><td colspan="2" class="text-muted">No payments recorded yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if user.is_goldsmith %}
+  <a href="{% url 'payments:record' order.pk %}" class="btn btn-warning">Record Payment</a>
+  <a href="{% url 'orders:update_status' order.pk %}" class="btn btn-outline-primary">Update Status</a>
+{% endif %}
+{% endblock %}
