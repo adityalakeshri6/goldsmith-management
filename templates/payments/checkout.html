@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Pay for Order #{{ order.pk }}{% endblock %}
+{% block content %}
+<h2 class="mb-3">Complete Payment — Order #{{ order.pk }}</h2>
+<div class="card p-4" style="max-width:420px;">
+  <p>Amount to pay: <strong>₹{{ order.remaining_amount }}</strong></p>
+  <button id="rzp-button" class="btn btn-warning">Pay Now</button>
+  <a href="{% url 'orders:detail' order.pk %}" class="btn btn-outline-secondary mt-2">Cancel</a>
+</div>
+
+<form id="verify-form" method="post" action="{% url 'payments:verify_online' order.pk %}" style="display:none;">
+  {% csrf_token %}
+  <input type="hidden" name="razorpay_payment_id" id="id_payment_id">
+  <input type="hidden" name="razorpay_order_id" id="id_order_id">
+  <input type="hidden" name="razorpay_signature" id="id_signature">
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('rzp-button').onclick = function (e) {
+    e.preventDefault();
+    var options = {
+      "key": "{{ razorpay_key_id }}",
+      "amount": "{{ amount_paise }}",
+      "currency": "INR",
+      "name": "{{ business_name }}",
+      "description": "Order #{{ order.pk }} payment",
+      "order_id": "{{ razorpay_order_id }}",
+      "handler": function (response) {
+        document.getElementById('id_payment_id').value = response.razorpay_payment_id;
+        document.getElementById('id_order_id').value = response.razorpay_order_id;
+        document.getElementById('id_signature').value = response.razorpay_signature;
+        document.getElementById('verify-form').submit();
+      },
+      "prefill": {
+        "name": "{{ order.user.get_full_name|default:order.user.username }}",
+        "email": "{{ order.user.email }}"
+      },
+      "theme": { "color": "#8b6b1f" }
+    };
+    var rzp = new Razorpay(options);
+    rzp.open();
+  };
+</script>
+{% endblock %}
