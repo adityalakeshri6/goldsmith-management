@@ -23,3 +23,8 @@ staticfiles/
 
 # OS
 .DS_Store
+
+
+# Environment secrets — never commit this
+.env
+staticfiles/
