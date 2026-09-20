@@ -26,5 +26,8 @@
 {% if user.is_goldsmith %}
   <a href="{% url 'payments:record' order.pk %}" class="btn btn-warning">Record Payment</a>
   <a href="{% url 'orders:update_status' order.pk %}" class="btn btn-outline-primary">Update Status</a>
+{% elif order.remaining_amount > 0 %}
+  <a href="{% url 'payments:pay_online' order.pk %}" class="btn btn-warning">Pay Online</a>
 {% endif %}
+<a href="{% url 'orders:invoice' order.pk %}" class="btn btn-outline-secondary">Download Invoice (PDF)</a>
 {% endblock %}
