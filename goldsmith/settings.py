@@ -1,7 +1,3 @@
-"""
-Django settings for goldsmith project.
-"""
-
 from pathlib import Path
 from decouple import config, Csv
 
