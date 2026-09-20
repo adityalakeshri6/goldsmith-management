@@ -1,11 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from accounts.decorators import goldsmith_required
 from catalogue.models import Jewellery
 from .models import Order
 from .forms import OrderStatusForm
+from .invoice import generate_invoice_pdf
 
 
 @login_required
@@ -69,3 +71,13 @@ def update_order_status(request, pk):
     else:
         form = OrderStatusForm(instance=order)
     return render(request, 'orders/update_status.html', {'form': form, 'order': order})
+
+
+@login_required
+def download_invoice(request, pk):
+    if request.user.is_goldsmith:
+        order = get_object_or_404(Order, pk=pk)
+    else:
+        order = get_object_or_404(Order, pk=pk, user=request.user)
+    pdf_buffer = generate_invoice_pdf(order)
+    return FileResponse(pdf_buffer, as_attachment=True, filename=f"invoice-order-{order.pk}.pdf")
